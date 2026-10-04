@@ -1,0 +1,232 @@
+{
+  "clean": {
+    "fields_evaluated": 6030,
+    "value_accuracy": 0.6721,
+    "value_accuracy_by_type": {
+      "bool": 0.933,
+      "bp": 0.547,
+      "code": 0.2,
+      "date": 0.53,
+      "float": 0.326,
+      "ga": 0.662,
+      "int": 0.548,
+      "lab": 0.935,
+      "text": 0.751
+    },
+    "status_accuracy": 0.9744,
+    "checkbox_accuracy": 1.0,
+    "overall_field_accuracy": 0.8833,
+    "auto_accept_coverage": 0.4567,
+    "auto_accept_precision": 0.996,
+    "silent_error_rate": 0.0018,
+    "review_catch_rate": 0.9844,
+    "ece": 0.0777,
+    "reliability": {
+      "0.0-0.1": {
+        "n": 374,
+        "acc": 0.364
+      },
+      "0.1-0.2": {
+        "n": 36,
+        "acc": 0.389
+      },
+      "0.2-0.3": {
+        "n": 59,
+        "acc": 0.356
+      },
+      "0.3-0.4": {
+        "n": 175,
+        "acc": 0.154
+      },
+      "0.4-0.5": {
+        "n": 68,
+        "acc": 0.397
+      },
+      "0.5-0.6": {
+        "n": 81,
+        "acc": 0.556
+      },
+      "0.6-0.7": {
+        "n": 182,
+        "acc": 0.379
+      },
+      "0.7-0.8": {
+        "n": 150,
+        "acc": 0.7
+      },
+      "0.8-0.9": {
+        "n": 190,
+        "acc": 0.974
+      },
+      "0.9-1.0": {
+        "n": 4715,
+        "acc": 0.996
+      }
+    },
+    "seconds_per_registry": 23.3
+  },
+  "mild": {
+    "fields_evaluated": 6030,
+    "value_accuracy": 0.5262,
+    "value_accuracy_by_type": {
+      "bool": 0.503,
+      "bp": 0.4,
+      "code": 0.2,
+      "date": 0.442,
+      "float": 0.25,
+      "ga": 0.485,
+      "int": 0.399,
+      "lab": 0.794,
+      "text": 0.636
+    },
+    "status_accuracy": 0.9522,
+    "checkbox_accuracy": 0.9964,
+    "overall_field_accuracy": 0.8299,
+    "auto_accept_coverage": 0.4226,
+    "auto_accept_precision": 0.9937,
+    "silent_error_rate": 0.0027,
+    "review_catch_rate": 0.9844,
+    "ece": 0.0567,
+    "reliability": {
+      "0.0-0.1": {
+        "n": 395,
+        "acc": 0.243
+      },
+      "0.1-0.2": {
+        "n": 48,
+        "acc": 0.271
+      },
+      "0.2-0.3": {
+        "n": 66,
+        "acc": 0.258
+      },
+      "0.3-0.4": {
+        "n": 295,
+        "acc": 0.071
+      },
+      "0.4-0.5": {
+        "n": 76,
+        "acc": 0.368
+      },
+      "0.5-0.6": {
+        "n": 97,
+        "acc": 0.495
+      },
+      "0.6-0.7": {
+        "n": 148,
+        "acc": 0.412
+      },
+      "0.7-0.8": {
+        "n": 144,
+        "acc": 0.688
+      },
+      "0.8-0.9": {
+        "n": 192,
+        "acc": 0.839
+      },
+      "0.9-1.0": {
+        "n": 4569,
+        "acc": 0.976
+      }
+    },
+    "seconds_per_registry": 27.6
+  },
+  "heavy": {
+    "fields_evaluated": 6030,
+    "value_accuracy": 0.2399,
+    "value_accuracy_by_type": {
+      "bool": 0.245,
+      "bp": 0.053,
+      "code": 0.1,
+      "date": 0.072,
+      "float": 0.093,
+      "ga": 0.162,
+      "int": 0.161,
+      "lab": 0.453,
+      "text": 0.344
+    },
+    "status_accuracy": 0.931,
+    "checkbox_accuracy": 0.9919,
+    "overall_field_accuracy": 0.7353,
+    "auto_accept_coverage": 0.361,
+    "auto_accept_precision": 0.9922,
+    "silent_error_rate": 0.0028,
+    "review_catch_rate": 0.9893,
+    "ece": 0.0624,
+    "reliability": {
+      "0.0-0.1": {
+        "n": 534,
+        "acc": 0.079
+      },
+      "0.1-0.2": {
+        "n": 87,
+        "acc": 0.092
+      },
+      "0.2-0.3": {
+        "n": 109,
+        "acc": 0.138
+      },
+      "0.3-0.4": {
+        "n": 397,
+        "acc": 0.048
+      },
+      "0.4-0.5": {
+        "n": 99,
+        "acc": 0.313
+      },
+      "0.5-0.6": {
+        "n": 101,
+        "acc": 0.337
+      },
+      "0.6-0.7": {
+        "n": 203,
+        "acc": 0.202
+      },
+      "0.7-0.8": {
+        "n": 107,
+        "acc": 0.561
+      },
+      "0.8-0.9": {
+        "n": 127,
+        "acc": 0.638
+      },
+      "0.9-1.0": {
+        "n": 4266,
+        "acc": 0.962
+      }
+    },
+    "seconds_per_registry": 34.0
+  },
+  "pii_leak_details": [
+    [
+      "P07",
+      "nbl_seen_by",
+      [
+        "salma"
+      ]
+    ],
+    [
+      "P07",
+      "nbl_seen_by",
+      [
+        "salma"
+      ]
+    ],
+    [
+      "P07",
+      "nbl_seen_by",
+      [
+        "salma"
+      ]
+    ],
+    [
+      "P07",
+      "nbl_seen_by",
+      [
+        "salma"
+      ]
+    ]
+  ],
+  "pii_leaks": 4,
+  "backend": "local_ocr"
+}

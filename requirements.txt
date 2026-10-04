@@ -1,0 +1,10 @@
+# Python >= 3.11 ; system package: tesseract-ocr (apt install tesseract-ocr / brew install tesseract)
+numpy>=1.26
+opencv-python-headless>=4.8   # SIFT is in the main package since 4.4
+pillow>=10
+pytesseract>=0.3.10
+pdfplumber>=0.11              # only to rebuild ground truth / templates from the specimen PDF
+pypdfium2>=4
+cryptography>=41
+pandas>=2
+openpyxl>=3.1

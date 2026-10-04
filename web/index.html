@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registre maternel — agent WhatsApp</title>
+<style>
+:root{
+  --wa-green:#075e54; --wa-teal:#128c7e; --wa-light:#25d366; --bubble-in:#ffffff; --bubble-out:#dcf8c6;
+  --chat-bg:#ece5dd; --ink:#1f2933; --muted:#65737e; --line:#d9dee3; --panel:#f7f8fa; --card:#ffffff;
+  --known:#1e8e3e; --review:#b26a00; --illegible:#c5221f; --blank:#80868b; --na:#5f6368; --unknown:#6a3fb5;
+}
+*{box-sizing:border-box} body{margin:0;font:14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:#dfe3e6}
+.app{display:grid;grid-template-columns:minmax(330px,420px) 1fr;gap:16px;padding:16px;height:100vh}
+@media (max-width:900px){.app{grid-template-columns:1fr;height:auto}.panel{min-height:70vh}}
+/* phone */
+.phone{display:flex;flex-direction:column;border-radius:18px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.18);background:var(--chat-bg);min-height:560px}
+.wa-head{background:var(--wa-green);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px}
+.avatar{width:36px;height:36px;border-radius:50%;background:#fff3;display:grid;place-items:center;font-size:18px}
+.wa-head .t{font-weight:600}.wa-head .s{font-size:12px;opacity:.85}
+.net{margin-left:auto;font-size:12px;padding:3px 8px;border-radius:12px;background:#ffffff2b}
+.net.off{background:#c5221f}
+.chat{flex:1;overflow-y:auto;padding:12px 10px 4px;display:flex;flex-direction:column;gap:6px}
+.msg{max-width:86%;padding:7px 10px 6px;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.12);white-space:pre-wrap;word-wrap:break-word}
+.msg.bot{background:var(--bubble-in);align-self:flex-start;border-top-left-radius:0}
+.msg.user{background:var(--bubble-out);align-self:flex-end;border-top-right-radius:0}
+.msg img{display:block;max-width:100%;border-radius:6px;margin:4px 0;border:1px solid #0001}
+.msg .time{font-size:10.5px;color:var(--muted);text-align:right;margin-top:2px}
+.btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.btns button{flex:1 1 auto;border:0;background:#f0f2f5;color:var(--wa-teal);font-weight:600;padding:7px 9px;border-radius:7px;cursor:pointer;font-size:13px}
+.btns button:hover{background:#e3f4ef}.btns button:disabled{color:#9aa;cursor:default;background:#f4f4f4}
+.compose{display:flex;gap:6px;padding:8px;background:#f0f0f0;align-items:center}
+.compose input[type=text]{flex:1;border:0;border-radius:20px;padding:10px 14px;font-size:14px}
+.round{width:40px;height:40px;border-radius:50%;border:0;background:var(--wa-teal);color:#fff;font-size:18px;cursor:pointer;display:grid;place-items:center}
+.round.cam{background:#fff;color:var(--wa-teal);border:1px solid var(--line)}
+.typing{font-size:12px;color:var(--muted);padding:0 12px 4px;min-height:16px}
+/* panel */
+.panel{background:var(--panel);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.08);display:flex;flex-direction:column;overflow:hidden}
+.tabs{display:flex;gap:2px;background:#fff;border-bottom:1px solid var(--line);padding:0 8px;overflow-x:auto}
+.tabs button{border:0;background:none;padding:12px 12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tabs button.on{color:var(--wa-green);border-bottom-color:var(--wa-teal)}
+.pane{display:none;padding:16px;overflow-y:auto;flex:1}.pane.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+.card h3{margin:0 0 8px;font-size:15px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-weight:600}
+.switch input{width:42px;height:22px;accent-color:var(--wa-teal)}
+select,input.f{padding:7px 9px;border:1px solid var(--line);border-radius:7px;background:#fff;font-size:13px}
+.btn{border:1px solid var(--line);background:#fff;padding:7px 11px;border-radius:7px;cursor:pointer;font-weight:600;font-size:13px}
+.btn.primary{background:var(--wa-teal);color:#fff;border-color:var(--wa-teal)}
+.muted{color:var(--muted);font-size:12.5px}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;margin-top:8px}
+.thumbs figure{margin:0;cursor:pointer;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.thumbs img{width:100%;height:110px;object-fit:cover;display:block}.thumbs figcaption{font-size:11px;padding:3px 5px;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:600}
+.chip{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11.5px;font-weight:600;color:#fff;white-space:nowrap}
+.KNOWN{background:var(--known)}.NEEDS_REVIEW{background:var(--review)}.ILLEGIBLE{background:var(--illegible)}
+.NOT_PROVIDED{background:var(--blank)}.NOT_APPLICABLE{background:var(--na)}.UNKNOWN{background:var(--unknown)}
+.state{font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:600}
+.lifecycle{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
+.lifecycle span{font-size:11px;padding:2px 6px;border-radius:6px;background:#eef1f4;color:#556}
+.lifecycle span.on{background:var(--wa-teal);color:#fff}
+.lifecycle span.fail{background:#fde7e7;color:#a00}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px}.kpi b{display:block;font-size:22px}
+.bars{display:flex;align-items:flex-end;gap:6px;height:140px;padding-top:6px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;color:var(--muted)}
+.bar div{width:100%;background:var(--wa-teal);border-radius:4px 4px 0 0;min-height:1px}
+.bar div.sup{background:repeating-linear-gradient(45deg,#cfd8dc,#cfd8dc 4px,#eceff1 4px,#eceff1 8px)}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;margin:6px 0}
+details summary{cursor:pointer;font-weight:600;padding:6px 0}
+.login{position:fixed;inset:0;background:#075e54ee;display:grid;place-items:center;z-index:9}
+.login .card{width:min(380px,92vw)} .login label{display:block;font-size:12px;color:var(--muted);margin-top:8px}
+.login input,.login select{width:100%}
+.hidden{display:none!important}
+.src{font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="login" id="login">
+  <div class="card">
+    <h3>🔐 Connexion sur l'appareil / Device login</h3>
+    <p class="muted">Le PIN déverrouille le stockage chiffré du téléphone. / The PIN unlocks the phone's encrypted storage.</p>
+    <label>Identifiant sage-femme / Midwife ID</label><input class="f" id="lg-id" value="SF-001">
+    <label>Nom affiché / Display name</label><input class="f" id="lg-name" value="Amina">
+    <label>Rôle / Role</label>
+    <select id="lg-role"><option value="midwife">Sage-femme (midwife)</option><option value="supervisor">Superviseur·e</option><option value="analyst">Épidémiologiste (analyst — no image access)</option></select>
+    <label>Langue / Language</label><select id="lg-lang"><option value="fr">Français</option><option value="en">English</option></select>
+    <label>PIN</label><input class="f" id="lg-pin" type="password" value="1234">
+    <div class="row" style="margin-top:12px"><button class="btn primary" id="lg-go">Entrer / Enter</button><span id="lg-err" class="muted"></span></div>
+  </div>
+</div>
+
+<div class="app">
+  <section class="phone" aria-label="WhatsApp">
+    <div class="wa-head">
+      <div class="avatar">🤰</div>
+      <div><div class="t">Registre maternel · IA</div><div class="s" id="who">assistant</div></div>
+      <div class="net" id="netbadge">en ligne</div>
+    </div>
+    <div class="chat" id="chat"></div>
+    <div class="typing" id="typing"></div>
+    <form class="compose" id="compose">
+      <label class="round cam" title="Photo"><input type="file" id="file" accept="image/*" capture="environment" hidden multiple>📷</label>
+      <input type="text" id="text" placeholder="Message" autocomplete="off">
+      <button class="round" type="submit" title="Envoyer">➤</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="tabs" id="tabs">
+      <button data-p="demo" class="on">🎛️ Démo</button>
+      <button data-p="records">📋 Dossiers & cycle de vie</button>
+      <button data-p="record">📄 Dossier</button>
+      <button data-p="dash">📊 Tableau de bord</button>
+    </div>
+
+    <div class="pane on" id="p-demo">
+      <div class="card">
+        <h3>📶 Connectivité simulée</h3>
+        <div class="row">
+          <label class="switch"><input type="checkbox" id="online" checked> <span id="onlinelbl">En ligne</span></label>
+          <span class="muted">Couper le réseau à tout moment, même pendant un traitement : rien n'est perdu.</span>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <span class="muted">Pannes simulées :</span>
+          <button class="btn" id="inj-ai">💥 Prochain traitement IA échoue</button>
+          <button class="btn" id="inj-sync">💥 Prochaine synchro échoue</button>
+          <label class="muted">Coupures aléatoires <select id="drop"><option value="0">0%</option><option value="0.2">20%</option><option value="0.5">50%</option></select></label>
+        </div>
+        <div class="muted" id="injstate" style="margin-top:6px"></div>
+      </div>
+      <div class="card">
+        <h3>🖼️ Pages de registre (jeu de test dérivé du PDF spécimen)</h3>
+        <div class="row">
+          <select id="lvl"><option value="heavy">Photo terrain dégradée</option><option value="mild">Photo moyenne</option><option value="clean">Scan propre</option></select>
+          <select id="pat"></select>
+          <button class="btn primary" id="sendall">📷 Envoyer toutes les pages</button>
+        </div>
+        <p class="muted">Cliquez une miniature pour l'envoyer comme photo (ou utilisez 📷 dans le téléphone avec une vraie photo).</p>
+        <div class="thumbs" id="thumbs"></div>
+      </div>
+      <div class="card">
+        <h3>🎬 Scénario de démo (≈ 3 min)</h3>
+        <ol class="muted" style="margin:0;padding-left:18px">
+          <li>Décochez « En ligne », puis « 📷 Nouveau registre » et envoyez les pages → <b>capture hors ligne</b>, dossier <span class="state">PENDING_AI</span>.</li>
+          <li>Recochez « En ligne » → <b>retour de la connexion</b> : traitement, notification.</li>
+          <li>« 🔍 Vérifier maintenant » → <b>révision d'un champ incertain</b> avec l'extrait de la photo.</li>
+          <li>Validez → <b>décision de correspondance</b> [Patiente 1] [Aucune — créer] [Je ne sais pas]. Renvoyez le même registre pour voir la re-numérisation.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="pane" id="p-records">
+      <div class="card"><h3>Appareil</h3><div class="kpis" id="kpis"></div></div>
+      <div class="card"><h3>Cycle de vie</h3>
+        <div class="lifecycle" id="lc"></div>
+        <table><thead><tr><th>Dossier</th><th>État</th><th>Patiente</th><th>Essais</th><th>Mis à jour</th><th></th></tr></thead><tbody id="rectable"></tbody></table>
+      </div>
+    </div>
+
+    <div class="pane" id="p-record"><div class="card" id="recview"><span class="muted">Ouvrez un dossier (📄 Voir le dossier, ou depuis la liste).</span></div></div>
+
+    <div class="pane" id="p-dash"><div id="dash"></div></div>
+  </section>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+let TOKEN = null, SINCE = 0, USER = null, LAST_BOT = null, LANG = 'fr';
+const LIFECYCLE = ["CAPTURED","PENDING_AI","AI_PROCESSED","NEEDS_REVIEW","VALIDATED","PATIENT_MATCHED","REGISTERED","SYNCED"];
+const FAILS = ["PROCESSING_FAILED","SYNC_FAILED","DUPLICATE_SUSPECTED","MANUAL_REVIEW_REQUIRED"];
+const ST_FR = {KNOWN:"connu",UNKNOWN:"inconnu",NOT_PROVIDED:"non fourni",ILLEGIBLE:"illisible",NOT_APPLICABLE:"non applicable",NEEDS_REVIEW:"à réviser"};
+
+async function api(path, body){
+  const opt = body ? {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({...body, token:TOKEN})} : {};
+  const sep = path.includes('?') ? '&' : '?';
+  const r = await fetch(body ? path : `${path}${sep}token=${TOKEN||''}`, opt);
+  if (!r.ok) throw new Error((await r.json()).error || r.status);
+  return r.headers.get('content-type').includes('json') ? r.json() : r;
+}
+function esc(s){return String(s??'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function fmt(s){return esc(s).replace(/\*([^*\n]+)\*/g,'<b>$1</b>').replace(/(^|\s)_([^_\n]+)_/g,'$1<i>$2</i>')}
+function hhmm(ts){const d=new Date(ts*1000);return d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
+
+$('#lg-go').onclick = async () => {
+  try{
+    const r = await api('/api/login', {midwife_id:$('#lg-id').value, name:$('#lg-name').value, role:$('#lg-role').value, pin:$('#lg-pin').value, lang:$('#lg-lang').value});
+    TOKEN = r.token; USER = r.user; $('#login').classList.add('hidden');
+    $('#who').textContent = `${USER.name} · ${USER.id} · ${USER.role}`;
+    poll(); state(); loadSamples(); setInterval(state, 2000);
+  }catch(e){ $('#lg-err').textContent = e.message }
+};
+
+function render(m){
+  const div = document.createElement('div');
+  div.className = 'msg ' + (m.from === 'user' ? 'user' : 'bot');
+  let html = '';
+  if (m.image) html += `<img src="${m.image}${m.image.includes('?')?'&':'?'}token=${TOKEN}" alt="extrait de la photo" loading="lazy">`;
+  if (m.text && m.text !== '📷') html += `<div>${fmt(m.text)}</div>`;
+  if (m.buttons && m.buttons.length){
+    html += '<div class="btns">' + m.buttons.map(b=>`<button data-id="${esc(b.id)}">${esc(b.label)}</button>`).join('') + '</div>';
+  }
+  html += `<div class="time">${hhmm(m.ts)}${m.from==='user'?' ✓✓':''}</div>`;
+  div.innerHTML = html;
+  div.querySelectorAll('button').forEach(b => b.onclick = () => {
+    div.querySelectorAll('button').forEach(x=>x.disabled=true);
+    send({type:'button', id:b.dataset.id, label:b.textContent});
+  });
+  $('#chat').appendChild(div);
+  if (m.from !== 'user'){ if (LAST_BOT && LAST_BOT !== div && m.buttons?.length) LAST_BOT.querySelectorAll('.btns button').forEach(x=>x.disabled=true); if (m.buttons?.length) LAST_BOT = div; }
+  if (m.open_record) openRecord(m.open_record);
+}
+async function poll(){
+  try{
+    const r = await api(`/api/poll?since=${SINCE}`);
+    for (const m of r.messages){ render(m); SINCE = Math.max(SINCE, m.seq) }
+    if (r.messages.length) $('#chat').scrollTop = $('#chat').scrollHeight;
+    LANG = r.lang;
+  }catch(e){}
+  setTimeout(poll, 700);
+}
+async function send(ev){ $('#typing').textContent = '…'; await api('/api/send', ev); setTimeout(()=>$('#typing').textContent='', 800) }
+$('#compose').onsubmit = e => { e.preventDefault(); const t=$('#text').value.trim(); if(!t) return; $('#text').value=''; send({type:'text', text:t}) };
+
+// photos from the phone camera / gallery (resized on device)
+$('#file').onchange = async e => {
+  for (const f of e.target.files){
+    const img = await createImageBitmap(f);
+    const s = Math.min(1, 2400 / Math.max(img.width, img.height));
+    const c = document.createElement('canvas'); c.width = img.width*s; c.height = img.height*s;
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    const data = c.toDataURL('image/jpeg', 0.9);
+    const p = document.createElement('canvas'); const ps = 360/Math.max(c.width,c.height); p.width=c.width*ps; p.height=c.height*ps;
+    p.getContext('2d').drawImage(c,0,0,p.width,p.height);
+    $('#typing').textContent = 'envoi de la photo…';
+    await api('/api/photo', {data, preview:p.toDataURL('image/jpeg',0.6)});
+    await new Promise(r=>setTimeout(r, 2500));
+  }
+  e.target.value='';
+};
+
+// demo panel
+let SAMPLES = {};
+async function loadSamples(){
+  SAMPLES = await api('/api/samples');
+  const pats = [...new Set((SAMPLES.heavy||[]).map(n=>n.slice(0,3)))];
+  $('#pat').innerHTML = pats.map(p=>`<option>${p}</option>`).join('');
+  drawThumbs();
+}
+function drawThumbs(){
+  const lvl=$('#lvl').value, p=$('#pat').value;
+  const names=(SAMPLES[lvl]||[]).filter(n=>n.startsWith(p));
+  $('#thumbs').innerHTML = names.map(n=>`<figure data-n="${n}"><img src="/api/sample/${lvl}/${n}" alt="${n}"><figcaption>${n.slice(4,-4)}</figcaption></figure>`).join('');
+  $('#thumbs').querySelectorAll('figure').forEach(f=>f.onclick=()=>api('/api/sample',{level:lvl,name:f.dataset.n}));
+}
+$('#lvl').onchange = drawThumbs; $('#pat').onchange = drawThumbs;
+$('#sendall').onclick = async () => {
+  const lvl=$('#lvl').value, p=$('#pat').value;
+  const names=(SAMPLES[lvl]||[]).filter(n=>n.startsWith(p));
+  const order=['cover','identification','pregnancy','delivery','pp_mother_early','pp_newborn_early','pp_mother_late','pp_newborn_late'];
+  names.sort((a,b)=>order.indexOf(a.slice(4,-4))-order.indexOf(b.slice(4,-4)));
+  for (const n of names){ $('#typing').textContent = `envoi ${n}…`; await api('/api/sample',{level:lvl,name:n}); await new Promise(r=>setTimeout(r, 3200)); }
+  $('#typing').textContent='';
+};
+$('#online').onchange = async e => { await api('/api/network', {online:e.target.checked}); state() };
+$('#drop').onchange = async e => { await api('/api/network', {online:$('#online').checked, drop_rate:e.target.value}) };
+$('#inj-ai').onclick = () => api('/api/inject', {ai:3}).then(state);
+$('#inj-sync').onclick = () => api('/api/inject', {sync:1}).then(state);
+
+document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on', x===b));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on', p.id==='p-'+b.dataset.p));
+  if (b.dataset.p==='dash') dashboard();
+});
+function tab(p){ document.querySelector(`#tabs button[data-p="${p}"]`).click() }
+
+async function state(){
+  try{
+    const s = await api('/api/state');
+    $('#online').checked = s.online; $('#onlinelbl').textContent = s.online ? 'En ligne' : 'Hors ligne';
+    $('#netbadge').textContent = s.online ? (s.worker_busy ? '🤖 traitement…' : 'en ligne') : '📴 hors ligne';
+    $('#netbadge').classList.toggle('off', !s.online);
+    $('#injstate').textContent = `Pannes en attente — IA: ${s.inject.ai} · synchro: ${s.inject.sync} · coupures: ${Math.round(s.inject.drop*100)}%`;
+    const c = s.counts;
+    $('#kpis').innerHTML = [['Dossiers', s.records.length], ['En attente IA', c.PENDING_AI||0], ['À vérifier', c.NEEDS_REVIEW||0],
+      ['Synchronisés', c.SYNCED||0], ['Patientes (appareil)', s.patients], ['Serveur central', `${s.central.records} dossiers`]]
+      .map(([k,v])=>`<div class="kpi"><span class="muted">${k}</span><b>${v}</b></div>`).join('');
+    $('#lc').innerHTML = LIFECYCLE.map(x=>`<span class="${c[x]?'on':''}">${x} ${c[x]||''}</span>`).join('→') + ' &nbsp; ' +
+      FAILS.map(x=>`<span class="${c[x]?'fail':''}">${x} ${c[x]||''}</span>`).join('');
+    $('#rectable').innerHTML = s.records.slice().reverse().map(r=>`<tr><td class="state">${r.id}</td><td><span class="state">${r.state}</span>${r.last_error?`<div class="muted">${esc(r.last_error)}</div>`:''}</td><td class="state">${r.patient_id||'—'}</td><td>${r.attempts}</td><td class="muted">${hhmm(r.updated_at)}</td><td><button class="btn" onclick="openRecord('${r.id}')">Ouvrir</button></td></tr>`).join('');
+  }catch(e){}
+}
+
+async function openRecord(rid){
+  const r = await api(`/api/record/${rid}`);
+  tab('record');
+  const counts = {};
+  r.pages.forEach(p=>p.fields.forEach(f=>{ if(f.status) counts[f.status]=(counts[f.status]||0)+1 }));
+  let html = `<h3>${r.id} <span class="state">· ${r.state}</span> ${r.patient_id?`· <span class="state">${r.patient_id}</span>`:''}</h3>`;
+  html += `<div class="legend">${Object.entries(counts).map(([k,v])=>`<span><span class="chip ${k}">${ST_FR[k]||k}</span> ${v}</span>`).join('')}</div>`;
+  if (r.extraction) html += `<p class="muted">Lecture : ${r.extraction.backends.join(' + ')} · ${r.extraction.seconds}s · ${r.extraction.consistency.length? 'Incohérences : '+r.extraction.consistency.join(', '):'contrôles de cohérence OK'}</p>`;
+  html += `<details><summary>🖼️ Images d'origine (${r.images.length}) — accès selon le rôle, journalisé</summary><div class="thumbs">${r.images.map(i=>`<figure><a href="/api/image/${i.id}?token=${TOKEN}" target="_blank"><img src="/api/image/${i.id}?token=${TOKEN}" alt="accès refusé pour ce rôle"></a><figcaption>${i.page_type||'?'} · ${new Date(i.captured_at*1000).toLocaleString()} · ${i.midwife_id} · ${i.processing_status}</figcaption></figure>`).join('')}</div></details>`;
+  for (const p of r.pages){
+    const st = {}; p.fields.forEach(f=>st[f.status]=(st[f.status]||0)+1);
+    const allMissing = p.fields.every(f=>f.note==='page non photographiée');
+    html += `<details ${p.page!=='pregnancy' && !allMissing ? 'open':''}><summary>${p.label} ${allMissing?'<span class="muted">(page non photographiée)</span>':Object.entries(st).map(([k,v])=>`<span class="chip ${k}">${v}</span>`).join(' ')}</summary>`;
+    if (!allMissing){
+      html += `<table><thead><tr><th>Champ</th><th>Valeur</th><th>Statut</th><th>Conf.</th><th>Source / note</th></tr></thead><tbody>`;
+      for (const f of p.fields){
+        if (!f.status) continue;
+        if (f.status==='NOT_PROVIDED' && p.page==='pregnancy') continue;
+        const v = f.value===true?'✔ oui':f.value===false?'✘ non':(f.value??'—');
+        html += `<tr><td>${esc(f.label)}</td><td><b>${esc(v)}</b>${f.raw && String(f.raw)!==String(f.value)?`<div class="src">lu : ${esc(f.raw)}</div>`:''}</td><td><span class="chip ${f.status}">${ST_FR[f.status]||f.status}</span></td><td>${Math.round((f.confidence||0)*100)}%</td><td class="src">${esc(f.source)}${f.note?' · '+esc(f.note):''}</td></tr>`;
+      }
+      html += `</tbody></table>`;
+    }
+    html += `</details>`;
+  }
+  if (r.analytic){
+    html += `<details><summary>📈 Export analytique (schéma du fichier de référence, sans identifiant)</summary><table>${Object.entries(r.analytic).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v??'<span class="muted">manquant</span>'}</td></tr>`).join('')}</table></details>`;
+  }
+  html += `<details><summary>🕓 Journal d'états</summary><table>${r.events.map(e=>`<tr><td class="muted">${new Date(e.ts*1000).toLocaleTimeString()}</td><td class="state">${e.from_state||'∅'} → ${e.to_state}</td><td>${esc(e.actor)}</td><td class="muted">${esc(e.detail)}</td></tr>`).join('')}</table></details>`;
+  $('#recview').innerHTML = html;
+}
+
+async function dashboard(){
+  const d = await api('/api/dashboard');
+  const bars = (hist) => { const max = Math.max(1, ...hist.map(h=>h.n||0)); return `<div class="bars">${hist.map(h=>`<div class="bar"><span>${h.n===null?'&lt;5':h.n}</span><div class="${h.n===null?'sup':''}" style="height:${h.n===null?14:Math.round(110*(h.n||0)/max)}px"></div><span>${h.bin}</span></div>`).join('')}</div>` };
+  const tests = Object.entries(d.tests).map(([k,t])=>`<tr><td>${k}</td><td>${t.tested}</td><td>${t.positive===null?'&lt;5 (masqué)':t.positive}</td><td>${t.rate===null?'—':(t.rate*100).toFixed(1)+' %'}</td><td class="muted">${t.missing}</td></tr>`).join('');
+  $('#dash').innerHTML = `
+  <div class="card"><h3>📊 Agrégats anonymisés — usage épidémiologique</h3>
+    <p class="muted">Sources : ${d.sources.historical_csv} lignes du fichier de référence + ${d.sources.digitised_synced} registres numérisés et synchronisés. Aucun identifiant ; effectifs &lt; 5 masqués.</p>
+    <div class="kpis"><div class="kpi"><span class="muted">Dossiers</span><b>${d.n_records}</b></div><div class="kpi"><span class="muted">TAS moyenne</span><b>${d.sbp_mean??'—'}</b></div><div class="kpi"><span class="muted">TAD moyenne</span><b>${d.dbp_mean??'—'}</b></div><div class="kpi"><span class="muted">TA manquante</span><b>${d.bp_missing}</b></div></div></div>
+  <div class="card"><h3>Tension artérielle systolique moyenne (mmHg)</h3>${bars(d.sbp_hist)}</div>
+  <div class="card"><h3>Tension artérielle diastolique moyenne (mmHg)</h3>${bars(d.dbp_hist)}</div>
+  <div class="card"><h3>Tests infectieux</h3><table><thead><tr><th>Test</th><th>Testées</th><th>Positives</th><th>Taux</th><th>Non renseigné</th></tr></thead><tbody>${tests}</tbody></table>
+    <p class="muted">L'hépatite C n'apparaît pas sur le registre papier (seul l'Ag HBs y figure) : elle provient uniquement du fichier de référence.</p></div>
+  <div class="card"><h3>Température maternelle post-partum (°C, registres numérisés)</h3>${d.temp_n?bars(d.temp_hist):'<p class="muted">Pas encore de registre synchronisé.</p>'}</div>
+  <p class="muted">Description uniquement — pas de prédiction de risque ni d'aide à la décision clinique (hors périmètre).</p>`;
+}
+</script>
+</body>
+</html>

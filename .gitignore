@@ -1,0 +1,8 @@
+__pycache__/
+data/runtime/
+reports/eval_errors.csv
+*.pyc
+reports/eval_records_*.pkl
+data/testset/clean/
+data/testset/mild/
+data/testset/heavy/
