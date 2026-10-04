@@ -1,0 +1,7 @@
+{
+  "name": "CodeML DayOne agent",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y tesseract-ocr && pip install -r requirements.txt",
+  "forwardPorts": [8000],
+  "portsAttributes": { "8000": { "label": "WhatsApp prototype", "onAutoForward": "openBrowser" } }
+}
